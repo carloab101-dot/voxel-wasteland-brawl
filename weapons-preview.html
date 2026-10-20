@@ -1,0 +1,28 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Wasteland Brawl — Weapons & Props</title>
+<style>body{margin:0;background:#1a0e10;overflow:hidden;font:12px monospace;color:#ffe0b0}#t{position:fixed;top:8px;left:12px;letter-spacing:2px}</style></head><body>
+<div id="t">WASTELAND BRAWL · WEAPONS.JS PREVIEW</div>
+<script type="module">
+import * as THREE from './three.module.min.js';
+import {WEAPON_IDS,WEAPONS,buildWeapon,createProp,PROP_IDS,spawnProjectile,updateWeapons,setScene,nukeExplosion,dissolve,muzzleFlash} from './weapons.js';
+const R=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setSize(innerWidth,innerHeight);R.shadowMap.enabled=true;document.body.prepend(R.domElement);
+const S=new THREE.Scene();S.background=new THREE.Color(0x6b332e);setScene(S);
+S.add(new THREE.HemisphereLight(0xffe0b0,0x50301a,1.0));const sun=new THREE.DirectionalLight(0xffc880,2);sun.position.set(-10,25,20);sun.castShadow=true;
+Object.assign(sun.shadow.camera,{left:-20,right:20,top:15,bottom:-15});sun.shadow.mapSize.set(2048,2048);S.add(sun);
+const a=innerWidth/innerHeight,h=10.5,C=new THREE.OrthographicCamera(-h*a,h*a,h,-h,.1,200);C.position.set(0,10,30);C.lookAt(0,2.5,0);
+const g=new THREE.Mesh(new THREE.BoxGeometry(40,.5,10),new THREE.MeshStandardMaterial({color:0xc49a62,roughness:.9}));g.position.y=-.25;g.receiveShadow=true;S.add(g);
+const lab=(txt,x,y)=>{const c=document.createElement('canvas');c.width=256;c.height=32;const k=c.getContext('2d');k.fillStyle='#ffe0b0';k.font='bold 20px monospace';k.textAlign='center';k.fillText(txt,128,22);
+ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c)}));s.scale.set(3.2,.4,1);s.position.set(x,y,1);S.add(s)};
+// weapons: row at y=6, scaled x2 for readability; a 2u reference fighter block on the left
+WEAPON_IDS.forEach((id,i)=>{const w=buildWeapon(id);w.scale.setScalar(2);const x=-15+i*3.6;w.position.set(x-.6,6.5,0);w.rotation.y=-.35;S.add(w);lab(WEAPONS[id].name.toUpperCase(),x,5.3)});
+const ref=new THREE.Mesh(new THREE.BoxGeometry(.6,2,.4),new THREE.MeshStandardMaterial({color:0x2457c5}));ref.position.set(-16.5,1,0);ref.castShadow=true;S.add(ref);
+const held=buildWeapon('handmade');held.position.set(-16.2,1.15,.3);S.add(held);lab('2U FIGHTER (1:1)',-16.3,-.6);
+PROP_IDS.forEach((id,i)=>{const p=createProp(id);p.position.set(-9+i*4.2,0,1);p.rotation.y=-.4;S.add(p);lab(id.toUpperCase(),-9+i*4.2,-.6)});
+// FX row y=3: projectiles in flight + effects frozen mid-play
+const dir=new THREE.Vector3(1,0,0);['pistol','shotgun','laserr','plasma'].forEach((id,i)=>spawnProjectile(S,id,new THREE.Vector3(-15+i*4,3,0),dir,0));
+for(const p of spawnProjectile(S,'nuke',new THREE.Vector3(1,3.2,0),new THREE.Vector3(1,.4,0),0))p.grav=0;
+muzzleFlash(S,new THREE.Vector3(5,3,0),'shotgun');
+dissolve(S,new THREE.Vector3(8,0,3),'ash');dissolve(S,new THREE.Vector3(10.5,0,3),'goo');nukeExplosion(S,new THREE.Vector3(15,0,-1),3.2);
+lab('ASH / GOO',9.3,-.6);lab('MINI-NUKE',15,-.6);
+let last=performance.now(),T=0;window.frames=0;
+function loop(n){const dt=Math.min(.05,(n-last)/1000);last=n;T+=dt;if(T<.9)updateWeapons(dt,{bound:40,floorY:-5});window.frames++;R.render(S,C);requestAnimationFrame(loop)}requestAnimationFrame(loop);
+</script></body></html>

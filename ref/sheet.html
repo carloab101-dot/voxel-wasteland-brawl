@@ -1,0 +1,15 @@
+<!doctype html><body style="margin:0"><script type="module">
+import * as THREE from '../three.module.min.js';import {buildFighter,animate} from '../fighters.js';
+const q=new URLSearchParams(location.search),sheet=q.has('sheet');
+const ids=['vault_kid','mutant_brute','glow_ghoul','iron_paladin','assault_bot'],states=sheet?['idle','run','jump','climb','melee','shoot','special','hit','ko']:['idle'];
+const W=sheet?1800:1500,H=sheet?1100:620;
+const R=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});R.setSize(W,H);R.shadowMap.enabled=true;R.toneMapping=THREE.ACESFilmicToneMapping;document.body.appendChild(R.domElement);
+const s=new THREE.Scene();s.background=new THREE.Color(0x3a2830);s.add(new THREE.HemisphereLight(0xffe0b0,0x50301a,1.1));const d=new THREE.DirectionalLight(0xffc880,2.2);d.position.set(-6,14,10);d.castShadow=true;Object.assign(d.shadow.camera,{left:-20,right:20,top:20,bottom:-20});s.add(d);
+const dx=3,dy=3.2,cols=states.length;
+ids.forEach((id,r)=>states.forEach((st,c)=>{const g=buildFighter(id);g.position.set((c-(cols-1)/2)*dx,-r*dy,0);g.rotation.y=-.5;s.add(g);
+ const fl=new THREE.Mesh(new THREE.BoxGeometry(2.6,.2,2),new THREE.MeshStandardMaterial({color:0xb58a5a}));fl.position.set(g.position.x,g.position.y-.1,0);fl.receiveShadow=true;s.add(fl);
+ animate(g,st,{melee:.11,hit:.05,ko:1,special:.25,jump:1,shoot:.2}[st]??.4)}));
+const hw=cols*dx/2+.3,hh=hw*H/W,cy=sheet?-(ids.length-1)*dy/2+1:1.1;const cam=new THREE.OrthographicCamera(-hw,hw,hh,-hh,.1,100);cam.position.set(0,cy+4,14);cam.lookAt(0,cy,0);
+if(!sheet){cam.left=-7.5;cam.right=7.5;cam.top=3.1;cam.bottom=-3.1;cam.updateProjectionMatrix();s.children.filter(o=>o.userData.fighterId).forEach((g,i)=>g.position.set(-6+i*3,0,0));s.children.filter(o=>o.isMesh).forEach((m,i)=>m.position.set(-6+i*3,-.1,0))}
+R.render(s,cam);
+</script>
