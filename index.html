@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wasteland Brawl — Voxel 2-Player Fighter</title>
+<style>
+html,body{margin:0;height:100%;overflow:hidden;background:#140d06;font-family:"Courier New",monospace;color:#3f6}
+.g{text-shadow:0 0 6px #3f6}
+#bars{position:fixed;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;pointer-events:none}
+.pb{width:38%;background:rgba(0,20,0,.65);border:2px solid #3f6;padding:6px 10px;font-size:14px}
+.hp{height:12px;border:1px solid #3f6;margin:4px 0}.hp div{height:100%;background:#3f6;transition:width .15s}
+#mid{text-align:center;font-size:20px;padding-top:6px}
+#keys{position:fixed;bottom:6px;left:8px;right:8px;display:flex;justify-content:space-between;font-size:12px;pointer-events:none}
+#keys div{background:rgba(0,20,0,.65);border:1px solid #3f6;padding:4px 8px}
+#ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,10,0,.7)}
+#ov .box{border:3px solid #3f6;background:rgba(0,18,0,.92);padding:20px 30px;text-align:center;max-width:92vw}
+.sel{display:flex;gap:40px;justify-content:center;margin:14px 0}
+.sel>div{border:2px solid #3f6;padding:10px 16px;min-width:220px}
+button{font:inherit;background:#020;color:#3f6;border:2px solid #3f6;padding:6px 14px;cursor:pointer;margin:3px}
+button.on{background:#3f6;color:#020}
+.scan{position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.12) 0 2px,transparent 2px 4px)}
+#toast{position:fixed;top:30%;width:100%;text-align:center;font-size:40px;pointer-events:none}
+</style></head><body>
+<div id="bars" class="g"><div class="pb" id="p1b"></div><div id="mid"></div><div class="pb" id="p2b"></div></div>
+<div id="keys" class="g">
+<div><b>P1</b> A/D move · W jump/climb up · S climb down/drop · <b>Z</b> pick up · <b>E</b> melee · <b>Q</b> special · <b>F</b> fire</div>
+<div><b>P2</b> ←/→ move · ↑ jump/climb · ↓ down/drop · <b>;</b> pick up · <b>.</b> melee · <b>,</b> special · <b>/</b> fire &nbsp;(or Numpad 3/1/2/0)</div></div>
+<div id="toast" class="g"></div><div class="scan"></div>
+<div id="ov"><div class="box g">
+<div style="font-size:30px">☢ WASTELAND BRAWL ☢</div><div>Local 2-player voxel fighter · first to 3 round wins</div>
+<div class="sel"><div><b>PLAYER 1</b><br>A / D to choose<div id="c1"></div><div id="d1" style="font-size:12px;min-height:30px"></div></div>
+<div><b>PLAYER 2</b><br>← / → to choose<div id="c2"></div><div id="d2" style="font-size:12px;min-height:30px"></div></div></div>
+<button id="go">[ FIGHT! ] (Enter)</button></div></div>
+<script type="module" src="game.js"></script>
+</body></html>
